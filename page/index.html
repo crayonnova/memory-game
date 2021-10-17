@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        h1 {
+            color: red;
+        }
+
+        body {
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <template id="first-template">
+        <h1 class="header">Empty</h1>
+        <p class="info">Empty</p>
+    </template>
+
+    <div id="card-parent"></div>
+
+    <div id="bg-changer" class="bg-changer">
+
+        <input type="file" class="bg-changer__input" id="bg-upload" hidden="hidden" onchange="changeBackground(event)">
+        <label for="bg-upload" class="bg-changer__label">Upload</label>
+
+
+    </div>
+</body>
+<script>
+    const body = document.querySelector('body');
+
+    function changeBackground(e) {
+        console.log(e);
+        console.log(body);
+        console.log(e.target.files[0])
+        
+
+        const reader = new FileReader();
+        reader.readAsDataURL(e.target.files[0]);
+        
+        reader.addEventListener('load', e => {
+            console.log('e.target ->', e.target.result)
+            
+            document.body.style.backgroundImage = `url(${e.target.result})`;
+            document.body.style.backgroundSize = 'contain';
+            
+        })
+    }
+
+    const cards = [
+        {
+            header: 'Header one',
+            info  : 'this is info two',
+            event: () => { console.log('header one') }
+        },
+        {
+            header: 'Header two',
+            info  : 'this is info three',
+            event: () => { console.log('header two') }
+        },
+        {
+            header: 'Header three',
+            info  : 'this is info four',
+            event: () => { console.log('header three') }
+        }
+    ];
+
+    const cardParent = document.getElementById('card-parent');
+    const firstTemplate = document.getElementById('first-template');
+
+    cards.forEach(card => {
+        const cloned = firstTemplate.content.cloneNode(true);
+        const clonedHeader = cloned.querySelector('.header');
+        const clonedInfo = cloned.querySelector('.info');
+        clonedHeader.addEventListener('click', card.event);
+        clonedHeader.textContent = card.header;
+        clonedInfo.textContent = card.info;
+    
+        cardParent.appendChild(cloned);
+    })
+
+
+
+</script>
+</html>

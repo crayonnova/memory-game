@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.outline-button, .curve-button, .button {
+  color: #fff;
+  padding: 15px;
+  margin: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  border: none;
+}
+.button-primary.outline-button, .button-primary.curve-button, .button-primary.button {
+  background-color: #2098D1;
+}
+.button-success.outline-button, .button-success.curve-button, .button-success.button {
+  background-color: #85DF99;
+}
+.button-info.outline-button, .button-info.curve-button, .button-info.button {
+  background-color: #44CCEB;
+}
+
+.curve-button {
+  border-radius: 20px;
+}
+
+.outline-button.button-primary {
+  background-color: transparent;
+  color: #2098D1;
+  border: 2px solid #2098D1;
+}
+.outline-button.button-success {
+  background-color: transparent;
+  color: #85DF99;
+  border: 2px solid #85DF99;
+}

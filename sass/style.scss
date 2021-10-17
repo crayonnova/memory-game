@@ -1,0 +1,51 @@
+@use "mixin";
+@use "variable";
+@import "global";
+@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
+
+
+%button {
+	color: #fff;
+	padding: 15px;
+	margin: 10px;
+	text-transform: uppercase;
+	font-weight: bold;
+	border: none;
+	
+	&.button-primary {
+		background-color: map-get(variable.$button-colors, 'primary');
+	}
+
+	&.button-success {
+		background-color: map-get(variable.$button-colors, 'success');
+	}
+
+	&.button-info {
+		background-color: map-get(variable.$button-colors,'info');
+	}
+}
+
+.button {
+	@extend %button;
+}
+
+.curve-button {
+	@extend %button;
+	border-radius: 20px;
+}
+
+.outline-button {
+	@extend %button;
+
+	&.button-primary {
+		background-color: transparent;
+		color: map-get(variable.$button-colors, 'primary');
+		border: 2px solid map-get(variable.$button-colors, 'primary');
+	}
+
+	&.button-success {
+		background-color: transparent;
+		color: map-get(variable.$button-colors, 'success');
+		border: 2px solid map-get(variable.$button-colors, 'success');
+	}
+}

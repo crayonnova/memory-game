@@ -1,0 +1,4 @@
+@import "variable";
+@mixin get-color() {
+  color: $green-color;
+}
