@@ -1,93 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <title>Furi playground</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="icon" type="image/x-icon" href="./img/fav.ico.png" />
     <style>
-        h1 {
-            color: red;
-        }
-
-        body {
-            background-size: cover;
-        }
+      body {
+        background-image: url("./img/default-bg.jpg");
+        background-size: contain;
+        background-repeat: repeat;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <template id="first-template">
-        <h1 class="header">Empty</h1>
-        <p class="info">Empty</p>
-    </template>
+  <body>
+    <div id="bday_play" class="btn-round">Pause</div>
+    <audio id="bday_audio" loop src="./audio/bday.mp3"></audio>
 
-    <div id="card-parent"></div>
-
+    <audio id="fail_audio"></audio>
+    <audio id="success_audio"></audio>
     <div id="bg-changer" class="bg-changer">
-
-        <input type="file" class="bg-changer__input" id="bg-upload" hidden="hidden" onchange="changeBackground(event)">
-        <label for="bg-upload" class="bg-changer__label">Upload</label>
-
-
+      <input
+        type="file"
+        class="bg-changer__input"
+        id="bg-upload"
+        hidden="hidden"
+        onchange="changeBackground(event)"
+      />
+      <label
+        for="bg-upload"
+        class="bg-changer__label outline-button btn-round btn-round-left"
+        >Upload</label
+      >
     </div>
-</body>
-<script>
-    const body = document.querySelector('body');
 
-    function changeBackground(e) {
-        console.log(e);
-        console.log(body);
-        console.log(e.target.files[0])
-        
+    <template id="first-template">
+      <div class="card">
+        <div class="content">
+          <div class="front"></div>
+          <div class="back"></div>
+        </div>
+      </div>
+    </template>
+    <div class="cards-wrapper">
+      <div id="cards"></div>
+    </div>
+  </body>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script>
+    const bdayAudioPlayer = document.getElementById("bday_audio");
+    const failAudioPlayer = document.getElementById("fail_audio");
+    const successAudioPlayer = document.getElementById("success_audio");
 
-        const reader = new FileReader();
-        reader.readAsDataURL(e.target.files[0]);
-        
-        reader.addEventListener('load', e => {
-            console.log('e.target ->', e.target.result)
-            
-            document.body.style.backgroundImage = `url(${e.target.result})`;
-            document.body.style.backgroundSize = 'contain';
-            
-        })
+    const bdayPlayBtn = document.getElementById("bday_play");
+    const cardParent = document.getElementById("cards");
+    const firstTemplate = document.getElementById("first-template");
+    const sampleDiv = document.getElementById("sample-clonable");
+    const selectedContents = [];
+    const randomImagesPath = "./img/random-images/";
+    const randomSuccessPath = "./audio/";
+    const successSounds = [
+      `${randomSuccessPath}kageyama_nice.mp3`,
+      `${randomSuccessPath}kageyama_hinata.mp3`,
+      `${randomSuccessPath}kageyama_pyo_pyo.mp3`,
+      `${randomSuccessPath}anime_tududu.mp3`,
+      `${randomSuccessPath}anime_wow_alarm.mp3`,
+      `${randomSuccessPath}breach_lets_go.mp3`,
+      `${randomSuccessPath}haikyuu_japan.mp3`,
+      `${randomSuccessPath}valorant_ace.mp3`,
+    ];
+    const failSounds = [
+      `${randomSuccessPath}kageyama_nani.mp3`,
+      `${randomSuccessPath}kageyama_baka.mp3`,
+      `${randomSuccessPath}kageyama_bokeboke.mp3`,
+      `${randomSuccessPath}anime_girl_scream.mp3`,
+      `${randomSuccessPath}luffy_hara_hetta.mp3`,
+      `${randomSuccessPath}luffy_kong.mp3`,
+    ];
+    const cards = [];
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB_oKbKYJb0nDdJF-J0m_P0ETVrUZCNUig",
+      authDomain: "furi-background.firebaseapp.com",
+      projectId: "furi-background",
+      storageBucket: "furi-background.appspot.com",
+      messagingSenderId: "762393525657",
+      appId: "1:762393525657:web:c099b45c494a853653e708",
+    };
+
+    function onCardClick(element, card, event) {
+      if (element.className.includes("disabled")) {
+        return;
+      }
+
+      const content = element.querySelector(".content");
+      if (selectedContents.length < 2) {
+        addSelectedCard(element, card);
+      }
+
+      if (selectedContents.length < 3) {
+        content.classList.toggle("flip-animate");
+      }
+
+      if (selectedContents.length === 2) {
+        matchSelectedCards();
+      }
     }
 
-    const cards = [
-        {
-            header: 'Header one',
-            info  : 'this is info two',
-            event: () => { console.log('header one') }
-        },
-        {
-            header: 'Header two',
-            info  : 'this is info three',
-            event: () => { console.log('header two') }
-        },
-        {
-            header: 'Header three',
-            info  : 'this is info four',
-            event: () => { console.log('header three') }
-        }
+    function matchSelectedCards() {
+      const [first, second] = selectedContents;
+
+      if (first.card.front === second.card.front) {
+        first.content.removeEventListener("click", onCardClick, true);
+        second.content.removeEventListener("click", onCardClick, true);
+
+        first.content.classList.add("disabled");
+        second.content.classList.add("disabled");
+        successAudioPlayer.src =
+          successSounds[Math.floor(Math.random() * successSounds.length)];
+        successAudioPlayer.play();
+      } else {
+        failAudioPlayer.src =
+          failSounds[Math.floor(Math.random() * failSounds.length)];
+        failAudioPlayer.play();
+        setTimeout(() => {
+          first.content
+            .querySelector(".content")
+            .classList.toggle("flip-animate");
+          second.content
+            .querySelector(".content")
+            .classList.toggle("flip-animate");
+        }, 600);
+      }
+      selectedContents.length = 0;
+
+      if (
+        [...cardParent.children].every((a) => a.className.includes("disabled"))
+      ) {
+        bdayAudioPlayer.play();
+        bdayPlayBtn.style.display = "block";
+
+        bdayPlayBtn.addEventListener("click", function () {
+          bdayAudioPlayer.muted = !bdayAudioPlayer.muted;
+
+          if (bdayAudioPlayer.muted) {
+            this.textContent = "PLAY";
+          } else {
+            this.textContent = "PAUSE";
+          }
+        });
+        // bdayAudioPlayer.addEventListener("canplaythrough", function (event) {
+        //   setTimeout(() => {
+        //     this.play();
+        //   }, 3000);
+
+        // });
+      }
+    }
+
+    function addSelectedCard(content, card) {
+      if (selectedContents.findIndex((sc) => sc.content == content) === -1) {
+        selectedContents.push({
+          content,
+          card,
+        });
+      } else {
+        selectedContents.length = 0;
+      }
+    }
+
+    const images = [
+      {
+        id: 1,
+        imgUrl: `${randomImagesPath}cuteuncle.jpg`,
+      },
+      {
+        id: 2,
+        imgUrl: `${randomImagesPath}fav-hairstyle.jpg`,
+      },
+      {
+        id: 3,
+        imgUrl: `${randomImagesPath}ilikeyouinblack.jpg`,
+      },
+      {
+        id: 4,
+        imgUrl: `${randomImagesPath}kissyou.jpg`,
+      },
+      {
+        id: 5,
+        imgUrl: `${randomImagesPath}lovely.png`,
+      },
+      {
+        id: 6,
+        imgUrl: `${randomImagesPath}loveyou.jpg`,
+      },
     ];
 
-    const cardParent = document.getElementById('card-parent');
-    const firstTemplate = document.getElementById('first-template');
+    function loadRandomCards() {
+      const randomImages = shuffleArray([...images, ...images]);
 
-    cards.forEach(card => {
+      randomImages.forEach((ri) => {
+        cards.push({
+          front: ri.id,
+          back: ri.imgUrl,
+          event: onCardClick,
+        });
+      });
+    }
+
+    /* Randomize array in-place using Durstenfeld shuffle algorithm */
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+
+      return array;
+    }
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    db.collection("background-image")
+      .doc("img")
+      .get()
+      .then((snap) => {
+        document.body.style.backgroundImage = `url(${snap.data().imgBase64})`;
+      });
+
+
+    function changeBackground(e) {
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+
+      reader.addEventListener("load", (e) => {
+        db.collection("background-image").doc("img").set({
+          imgBase64: e.target.result,
+        });
+        document.body.style.backgroundImage = `url(${e.target.result})`;
+      });
+    }
+
+    function renderCardsInitial() {
+      loadRandomCards();
+      cards.forEach((card, index) => {
         const cloned = firstTemplate.content.cloneNode(true);
-        const clonedHeader = cloned.querySelector('.header');
-        const clonedInfo = cloned.querySelector('.info');
-        clonedHeader.addEventListener('click', card.event);
-        clonedHeader.textContent = card.header;
-        clonedInfo.textContent = card.info;
-    
+        const cardRef = cloned.querySelector(".card");
+        cardRef.classList.add(++index);
+        const clonedFront = cloned.querySelector(".front");
+        const clonedBack = cloned.querySelector(".back");
+
+        cardRef.addEventListener(
+          "click",
+          card.event.bind(event, cardRef, card),
+          true
+        );
+
+        // clonedFront.textContent = card.front;
+        const frontImg = document.createElement("img");
+        frontImg.src = "./img/wall.jpg";
+        frontImg.classList.add("cover");
+        // clonedFront.textContent = card.front;
+        clonedFront.appendChild(frontImg);
+
+        const backImg = document.createElement("img");
+        backImg.src = card.back;
+        clonedBack.appendChild(backImg);
+
         cardParent.appendChild(cloned);
-    })
+      });
+    }
 
+    renderCardsInitial();
 
+    setTimeout(() => {
+      cards.length = 0;
+      cardParent.innerHTML = "";
+      renderCardsInitial();
+    }, 3000);
+  </script>
 
-</script>
+  <script></script>
 </html>
