@@ -33,8 +33,7 @@
       <label
         for="bg-upload"
         class="bg-changer__label outline-button btn-round btn-round-left"
-        >Upload</label
-      >
+        >Upload</label>
     </div>
 
     <template id="first-template">
@@ -83,7 +82,6 @@
     ];
     const cards = [];
 
-    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyB_oKbKYJb0nDdJF-J0m_P0ETVrUZCNUig",
       authDomain: "furi-background.firebaseapp.com",
@@ -154,12 +152,6 @@
             this.textContent = "PAUSE";
           }
         });
-        // bdayAudioPlayer.addEventListener("canplaythrough", function (event) {
-        //   setTimeout(() => {
-        //     this.play();
-        //   }, 3000);
-
-        // });
       }
     }
 
@@ -242,10 +234,12 @@
       reader.readAsDataURL(e.target.files[0]);
 
       reader.addEventListener("load", (e) => {
-        db.collection("background-image").doc("img").set({
-          imgBase64: e.target.result,
-        });
-        document.body.style.backgroundImage = `url(${e.target.result})`;
+        if (window.prompt('Enter code') === '21220') {
+          db.collection("background-image").doc("img").set({
+            imgBase64: e.target.result,
+          });
+          document.body.style.backgroundImage = `url(${e.target.result})`;
+        }
       });
     }
 
@@ -266,7 +260,7 @@
 
         // clonedFront.textContent = card.front;
         const frontImg = document.createElement("img");
-        frontImg.src = "./img/wall.jpg";
+        frontImg.src = "./img/kageyama-tobio-kageyama.gif";
         frontImg.classList.add("cover");
         // clonedFront.textContent = card.front;
         clonedFront.appendChild(frontImg);
@@ -280,13 +274,5 @@
     }
 
     renderCardsInitial();
-
-    setTimeout(() => {
-      cards.length = 0;
-      cardParent.innerHTML = "";
-      renderCardsInitial();
-    }, 3000);
   </script>
-
-  <script></script>
 </html>
