@@ -62,7 +62,6 @@
 }
 
 #cards {
-  // border: 1px solid red;
   margin: 0 auto;
   width: 1030px;
   display: flex;
@@ -72,7 +71,6 @@
 }
 
 .card {
-  box-shadow: 0px -1px 20px 5px #303030;
   cursor: pointer;
   width: 250px;
   height: 270px;
@@ -103,8 +101,8 @@
       line-height: 300px;
       color: #03446a;
       text-align: center;
-      //   font-size: 60px;
-      border-radius: 5px;
+      border-radius: 10px;
+      overflow: hidden;
       backface-visibility: hidden;
 
       img {
@@ -114,8 +112,9 @@
         border-radius: 5px;
 
         &.cover {
-          width: 80%;
-          object-fit: contain;
+          width:100%;
+          object-fit: cover;
+          object-position: bottom;
         }
       }
     }

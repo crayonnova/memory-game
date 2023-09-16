@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Furi playground</title>
-    <link rel="stylesheet" href="./css/style.css" />
-    <link rel="icon" type="image/x-icon" href="./img/fav.ico.png" />
+    <title>lin playground</title>
+    <link rel="stylesheet" href="./sass/style.css" />
+    <link rel="icon" type="image/x-icon" href="./img/favicon.ico" />
     <style>
       body {
         background-image: url("./img/default-bg.jpg");
@@ -189,7 +189,7 @@
       },
       {
         id: 6,
-        imgUrl: `${randomImagesPath}loveyou.jpg`,
+        imgUrl: `${randomImagesPath}loveyou.png`,
       },
     ];
 
@@ -234,7 +234,7 @@
       reader.readAsDataURL(e.target.files[0]);
 
       reader.addEventListener("load", (e) => {
-        if (window.prompt('Enter code') === '21220') {
+        if (window.prompt('Enter code') === '123') {
           db.collection("background-image").doc("img").set({
             imgBase64: e.target.result,
           });
