@@ -48,8 +48,6 @@
       <div id="cards"></div>
     </div>
   </body>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script>
     const bdayAudioPlayer = document.getElementById("bday_audio");
     const failAudioPlayer = document.getElementById("fail_audio");
@@ -63,33 +61,27 @@
     const randomImagesPath = "./img/random-images/";
     const randomSuccessPath = "./audio/";
     const successSounds = [
-      `${randomSuccessPath}kageyama_nice.mp3`,
-      `${randomSuccessPath}kageyama_hinata.mp3`,
-      `${randomSuccessPath}kageyama_pyo_pyo.mp3`,
+      `${randomSuccessPath}yeah-boy-114748.mp3`,
       `${randomSuccessPath}anime_tududu.mp3`,
       `${randomSuccessPath}anime_wow_alarm.mp3`,
-      `${randomSuccessPath}breach_lets_go.mp3`,
-      `${randomSuccessPath}haikyuu_japan.mp3`,
-      `${randomSuccessPath}valorant_ace.mp3`,
     ];
     const failSounds = [
-      `${randomSuccessPath}kageyama_nani.mp3`,
-      `${randomSuccessPath}kageyama_baka.mp3`,
+      `${randomSuccessPath}fail-144746.mp3`,
+      `${randomSuccessPath}bruh-sound-effect-1-6970.mp3`,
+      `${randomSuccessPath}pipe-117724.mp3`,
       `${randomSuccessPath}kageyama_bokeboke.mp3`,
       `${randomSuccessPath}anime_girl_scream.mp3`,
-      `${randomSuccessPath}luffy_hara_hetta.mp3`,
-      `${randomSuccessPath}luffy_kong.mp3`,
     ];
     const cards = [];
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB_oKbKYJb0nDdJF-J0m_P0ETVrUZCNUig",
-      authDomain: "furi-background.firebaseapp.com",
-      projectId: "furi-background",
-      storageBucket: "furi-background.appspot.com",
-      messagingSenderId: "762393525657",
-      appId: "1:762393525657:web:c099b45c494a853653e708",
-    };
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyB_oKbKYJb0nDdJF-J0m_P0ETVrUZCNUig",
+    //   authDomain: "furi-background.firebaseapp.com",
+    //   projectId: "furi-background",
+    //   storageBucket: "furi-background.appspot.com",
+    //   messagingSenderId: "762393525657",
+    //   appId: "1:762393525657:web:c099b45c494a853653e708",
+    // };
 
     function onCardClick(element, card, event) {
       if (element.className.includes("disabled")) {
@@ -216,18 +208,6 @@
 
       return array;
     }
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    db.collection("background-image")
-      .doc("img")
-      .get()
-      .then((snap) => {
-        document.body.style.backgroundImage = `url(${snap.data().imgBase64})`;
-      });
-
 
     function changeBackground(e) {
       const reader = new FileReader();
